@@ -46,7 +46,7 @@ UM_EXPORT_METHOD_AS(manipulateAsync,
   if (!_fileSystem) {
     return reject(@"E_MISSING_MODULE", @"No FileSystem module.", nil);
   }
-  if (!([_fileSystem permissionsForURI:url] & UMFileSystemPermissionRead)) {
+  if ([url.scheme isEqualToString:@"file"] && !([_fileSystem permissionsForURI:url] & UMFileSystemPermissionRead)) {
     return reject(@"E_FILESYSTEM_PERMISSIONS", [NSString stringWithFormat:@"File '%@' isn't readable.", uri], nil);
   }
   
