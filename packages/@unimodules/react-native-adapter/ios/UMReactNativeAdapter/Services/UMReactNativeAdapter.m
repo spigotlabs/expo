@@ -11,7 +11,7 @@
 @property (nonatomic, weak) RCTBridge *bridge;
 @property (nonatomic, weak) UMNativeModulesProxy *modulesProxy;
 @property (nonatomic, assign) BOOL isForegrounded;
-@property (nonatomic, strong) NSMutableSet<id<UMAppLifecycleListener>> *lifecycleListeners;
+@property (nonatomic, strong) NSPointerArray *lifecycleListeners;
 
 @end
 
@@ -42,7 +42,7 @@ UM_REGISTER_MODULE();
 {
   if (self = [super init]) {
     _isForegrounded = false;
-    _lifecycleListeners = [NSMutableSet set];
+    _lifecycleListeners = [NSPointerArray weakObjectsPointerArray];
   }
   return self;
 }
@@ -108,12 +108,21 @@ UM_REGISTER_MODULE();
 
 - (void)registerAppLifecycleListener:(id<UMAppLifecycleListener>)listener
 {
-  [_lifecycleListeners addObject:listener];
+  [_lifecycleListeners addPointer:(__bridge void * _Nullable)(listener)];
 }
 
 - (void)unregisterAppLifecycleListener:(id<UMAppLifecycleListener>)listener
 {
-  [_lifecycleListeners removeObject:listener];
+  for (int i = 0; i < _lifecycleListeners.count; i++) {
+    id pointer = [_lifecycleListeners pointerAtIndex:i];
+    if (pointer == (__bridge void * _Nullable)(listener) || !pointer) {
+      [_lifecycleListeners removePointerAtIndex:i];
+      i--;
+    }
+  }
+  // -(void)compact doesn't work, that's why we have this `|| !pointer` above
+  // http://www.openradar.me/15396578
+  [_lifecycleListeners compact];
 }
 
 # pragma mark - UMJavaScriptContextProvider
@@ -169,7 +178,7 @@ UM_REGISTER_MODULE();
 - (void)setAppStateToBackground
 {
   if (_isForegrounded) {
-    [_lifecycleListeners enumerateObjectsUsingBlock:^(id<UMAppLifecycleListener>  _Nonnull obj, BOOL * _Nonnull stop) {
+    [[_lifecycleListeners allObjects] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
       [obj onAppBackgrounded];
     }];
     _isForegrounded = false;
@@ -179,7 +188,7 @@ UM_REGISTER_MODULE();
 - (void)setAppStateToForeground
 {
   if (!_isForegrounded) {
-    [_lifecycleListeners enumerateObjectsUsingBlock:^(id<UMAppLifecycleListener>  _Nonnull obj, BOOL * _Nonnull stop) {
+    [[_lifecycleListeners allObjects] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
       [obj onAppForegrounded];
     }];
     _isForegrounded = true;
