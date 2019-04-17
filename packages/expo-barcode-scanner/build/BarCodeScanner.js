@@ -75,10 +75,12 @@ BarCodeScanner.propTypes = {
     onBarCodeScanned: PropTypes.func,
     barCodeTypes: PropTypes.array,
     type: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    zoom: PropTypes.number,
 };
 BarCodeScanner.defaultProps = {
     type: Type.back,
     barCodeTypes: Object.values(BarCodeType),
+    zoom: 0,
 };
 export const { Constants } = BarCodeScanner;
 //# sourceMappingURL=BarCodeScanner.js.map

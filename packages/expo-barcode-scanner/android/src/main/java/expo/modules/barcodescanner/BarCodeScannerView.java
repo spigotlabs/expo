@@ -23,6 +23,7 @@ public class BarCodeScannerView extends ViewGroup {
   private int mLeftPadding = 0;
   private int mTopPadding = 0;
   private int mType = 0;
+  private float mZoom = 0;
 
   public BarCodeScannerView(final Context context, ModuleRegistry moduleRegistry) {
     super(context);
@@ -115,8 +116,15 @@ public class BarCodeScannerView extends ViewGroup {
       this.mViewFinder.setCameraType(type);
       ExpoBarCodeScanner.getInstance().adjustPreviewLayout(type);
     } else {
-      mViewFinder = new BarCodeScannerViewFinder(mContext, type, this, mModuleRegistry);
+      mViewFinder = new BarCodeScannerViewFinder(mContext, type, mZoom, this, mModuleRegistry);
       addView(mViewFinder);
+    }
+  }
+
+  public void setZoom(final float zoom) {
+    mZoom = zoom;
+    if (null != this.mViewFinder) {
+      mViewFinder.setZoom(zoom);
     }
   }
 

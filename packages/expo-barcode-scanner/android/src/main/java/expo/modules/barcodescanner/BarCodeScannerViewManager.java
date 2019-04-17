@@ -74,4 +74,9 @@ public class BarCodeScannerViewManager extends ViewManager<BarCodeScannerView> {
     }};
     view.setBarCodeScannerSettings(settings);
   }
+
+  @ExpoProp(name = "zoom")
+  public void setZoom(BarCodeScannerView view, float zoom) {
+    view.setZoom(zoom);
+  }
 }
