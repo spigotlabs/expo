@@ -98,30 +98,30 @@ public class BarCodeScannerModule extends ExportedModule {
       }
     }
 
-    final ImageLoader imageLoader = mModuleRegistry.getModule(ImageLoader.class);
-    imageLoader.loadImageForDisplayFromURL(url, new ImageLoader.ResultListener() {
-      @Override
-      public void onSuccess(@NonNull Bitmap bitmap) {
-        BarCodeScanner scanner = mBarCodeScannerProvider.createBarCodeDetectorWithContext(getContext());
-        scanner.setSettings(new BarCodeScannerSettings() {{
-          putTypes(types);
-        }});
-        List<BarCodeScannerResult> results = scanner.scanMultiple(bitmap);
-
-        List<Bundle> resultList = new ArrayList<>();
-        for (BarCodeScannerResult result : results) {
-          Bundle bundle = new Bundle();
-          bundle.putString("data", result.getValue());
-          bundle.putInt("type", result.getType());
-          resultList.add(bundle);
-        }
-        promise.resolve(resultList);
-      }
-
-      @Override
-      public void onFailure(@Nullable Throwable cause) {
-        promise.reject(ERROR_TAG + "_IMAGE_RETRIEVAL_ERROR", "Could not get the image from given url: '" + url + "'", cause);
-      }
-    });
+//    final ImageLoader imageLoader = mModuleRegistry.getModule(ImageLoader.class);
+//    imageLoader.loadImageForDisplayFromURL(url, new ImageLoader.ResultListener() {
+//      @Override
+//      public void onSuccess(@NonNull Bitmap bitmap) {
+//        BarCodeScanner scanner = mBarCodeScannerProvider.createBarCodeDetectorWithContext(getContext());
+//        scanner.setSettings(new BarCodeScannerSettings() {{
+//          putTypes(types);
+//        }});
+//        List<BarCodeScannerResult> results = scanner.scanMultiple(bitmap);
+//
+//        List<Bundle> resultList = new ArrayList<>();
+//        for (BarCodeScannerResult result : results) {
+//          Bundle bundle = new Bundle();
+//          bundle.putString("data", result.getValue());
+//          bundle.putInt("type", result.getType());
+//          resultList.add(bundle);
+//        }
+//        promise.resolve(resultList);
+//      }
+//
+//      @Override
+//      public void onFailure(@Nullable Throwable cause) {
+//        promise.reject(ERROR_TAG + "_IMAGE_RETRIEVAL_ERROR", "Could not get the image from given url: '" + url + "'", cause);
+//      }
+//    });
   }
 }
