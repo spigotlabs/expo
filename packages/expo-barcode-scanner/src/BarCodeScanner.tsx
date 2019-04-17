@@ -27,6 +27,7 @@ export interface BarCodeScannerProps extends ViewProps {
   type?: 'front' | 'back' | number;
   barCodeTypes?: string[];
   onBarCodeScanned: BarCodeScannedCallback;
+  zoom?: number;
 }
 
 export class BarCodeScanner extends React.Component<BarCodeScannerProps> {
@@ -47,11 +48,13 @@ export class BarCodeScanner extends React.Component<BarCodeScannerProps> {
     onBarCodeScanned: PropTypes.func,
     barCodeTypes: PropTypes.array,
     type: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    zoom: PropTypes.number,
   };
 
   static defaultProps = {
     type: Type.back,
     barCodeTypes: Object.values(BarCodeType),
+    zoom: 0,
   };
 
   static async scanFromURLAsync(

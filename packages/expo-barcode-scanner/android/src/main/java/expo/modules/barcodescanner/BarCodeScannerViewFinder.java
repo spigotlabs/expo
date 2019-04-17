@@ -19,6 +19,7 @@ import org.unimodules.interfaces.barcodescanner.BarCodeScannerSettings;
 class BarCodeScannerViewFinder extends TextureView implements TextureView.SurfaceTextureListener, Camera.PreviewCallback {
   private final ModuleRegistry mModuleRegistry;
   private int mCameraType;
+  private float mZoom = 0;
   private SurfaceTexture mSurfaceTexture;
   private volatile boolean mIsStarting;
   private volatile boolean mIsStopping;
@@ -32,10 +33,11 @@ class BarCodeScannerViewFinder extends TextureView implements TextureView.Surfac
   // Scanner instance for the barcode scanning
   private BarCodeScanner mBarCodeScanner;
 
-  public BarCodeScannerViewFinder(Context context, int type, BarCodeScannerView barCodeScannerView, ModuleRegistry moduleRegistry) {
+  public BarCodeScannerViewFinder(Context context, int type, float zoom, BarCodeScannerView barCodeScannerView, ModuleRegistry moduleRegistry) {
     super(context);
     mModuleRegistry = moduleRegistry;
     mCameraType = type;
+    mZoom = zoom;
     mBarCodeScannerView = barCodeScannerView;
     setSurfaceTextureListener(this);
     initBarCodeScanner();
@@ -85,6 +87,22 @@ class BarCodeScannerViewFinder extends TextureView implements TextureView.Surfac
     }).start();
   }
 
+  public void setZoom(final float zoom) {
+    if (this.mZoom == zoom) {
+      return;
+    }
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        mIsChanging = true;
+        stopPreview();
+        mZoom = zoom;
+        startPreview();
+        mIsChanging = false;
+      }
+    }).start();
+  }
+
   private void startPreview() {
     if (mSurfaceTexture != null) {
       startCamera();
@@ -107,6 +125,10 @@ class BarCodeScannerViewFinder extends TextureView implements TextureView.Surfac
         List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
           parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
+        // set zoom
+        if (parameters.isZoomSupported()) {
+          parameters.setZoom((int) (mZoom * parameters.getMaxZoom()));
         }
         // set picture size
         // defaults to max available size

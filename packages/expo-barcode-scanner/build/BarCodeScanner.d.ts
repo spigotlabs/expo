@@ -14,6 +14,7 @@ export interface BarCodeScannerProps extends ViewProps {
     type?: 'front' | 'back' | number;
     barCodeTypes?: string[];
     onBarCodeScanned: BarCodeScannedCallback;
+    zoom?: number;
 }
 export declare class BarCodeScanner extends React.Component<BarCodeScannerProps> {
     lastEvents: {
@@ -33,6 +34,7 @@ export declare class BarCodeScanner extends React.Component<BarCodeScannerProps>
         onBarCodeScanned: PropTypes.Requireable<(...args: any[]) => any>;
         barCodeTypes: PropTypes.Requireable<any[]>;
         type: PropTypes.Requireable<React.ReactText>;
+        zoom: PropTypes.Requireable<number>;
         hitSlop?: PropTypes.Validator<import("react-native").Insets | undefined> | undefined;
         onLayout?: PropTypes.Validator<((event: import("react-native").LayoutChangeEvent) => void) | undefined> | undefined;
         pointerEvents?: PropTypes.Validator<"box-none" | "none" | "box-only" | "auto" | undefined> | undefined;
@@ -81,6 +83,7 @@ export declare class BarCodeScanner extends React.Component<BarCodeScannerProps>
     static defaultProps: {
         type: any;
         barCodeTypes: {}[];
+        zoom: number;
     };
     static scanFromURLAsync(url: string, barCodeTypes?: string[]): Promise<{
         type: string;
