@@ -1,3 +1,5 @@
+**This is a fork of expo-barcode-reader that implements zoom for Android.  It will only exist until this enhancement is merged into the main line.**
+
 # expo-barcode-scanner
 
 Allows scanning variety of supported barcodes both as standalone module and as extension for expo-camera. It also allows scanning barcodes from existing images.
